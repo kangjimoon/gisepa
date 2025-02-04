@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st 
 import pandas as pd
 import plotly.graph_objects as go
 from sklearn.cluster import KMeans
@@ -12,9 +12,14 @@ def load_data():
 
 df = load_data()
 
-# 국가별 플랫폼 비율 계산
+# 국가별 총 상금 기준 상위 60개 국가 선택
 platform_ratios = df.groupby('CountryCode').agg({'USDPrizeR': 'sum'}).reset_index()
+platform_ratios = platform_ratios.sort_values(by='USDPrizeR', ascending=False).head(60)
 
+top_60_countries = platform_ratios['CountryCode'].tolist()
+df = df[df['CountryCode'].isin(top_60_countries)]
+
+# 국가별 플랫폼 비율 계산
 for platform in ['PC', 'Mobile', 'Console']:
     platform_prize = df[df['Platform'] == platform].groupby('CountryCode')['USDPrizeR'].sum().reset_index()
     platform_ratios = platform_ratios.merge(platform_prize, on='CountryCode', how='left', suffixes=('', f'_{platform}'))
@@ -54,10 +59,10 @@ for cluster in range(4):
     ))
 
 fig.update_layout(
-    title='국가별 플랫폼 비율 클러스터 분석',
+    title='국가별 플랫폼 비율 클러스터 분석 (상위 60개 국가)',
     scene=dict(xaxis_title='PC (%)', yaxis_title='Mobile (%)', zaxis_title='Console (%)')
 )
 
 # Streamlit에 표시
-st.title('Esports 플랫폼 비율 클러스터링')
+st.title('Esports 플랫폼 비율 클러스터링 (상위 60개 국가)')
 st.plotly_chart(fig)
