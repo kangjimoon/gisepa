@@ -7,7 +7,7 @@ import pycountry
 # GitHub에서 CSV 데이터 로드
 @st.cache_data
 def load_data():
-    url = "https://github.com/kangjimoon/gisepa/blob/main/Esports_Raw.csv"
+    url = "https://raw.githubusercontent.com/kangjimoon/gisepa/main/Esports_Raw.csv"
     return pd.read_csv(url)
 
 df = load_data()
